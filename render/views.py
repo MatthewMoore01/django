@@ -22,7 +22,7 @@ all_logs = []
 @csrf_exempt
 def capture(request):
     if request.method == 'POST' and request.FILES.get('file'):
-        file = request.FILES.get('file')
+        file = request.FILES['file']
         image = np.asarray(bytearray(file.read()), dtype="uint8")
         image = cv2.imdecode(image, cv2.IMREAD_COLOR)
 
