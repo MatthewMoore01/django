@@ -9,17 +9,20 @@ import openai
 from openai import OpenAI, AssistantEventHandler
 from typing_extensions import override
 from collections import deque, Counter
+from datetime import datetime
 
 # Initialize OpenAI client
 client = OpenAI(api_key=os.getenv('OPENAI_API_KEY'))
 
 # Queue to hold the last five results
 last_five_results = deque(maxlen=5)
+# List to hold all logs
+all_logs = []
 
 @csrf_exempt
 def capture(request):
     if request.method == 'POST' and request.FILES.get('file'):
-        file = request.FILES['file']
+        file = request.FILES.get('file')
         image = np.asarray(bytearray(file.read()), dtype="uint8")
         image = cv2.imdecode(image, cv2.IMREAD_COLOR)
 
@@ -32,6 +35,15 @@ def capture(request):
             result = identify_lateral_flow_test(filename)
             last_five_results.append(result)
             most_common_result = get_most_common_result()
+
+            # Log the result with timestamp
+            log_entry = {
+                'timestamp': datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                'result': result,
+                'most_common_result': most_common_result
+            }
+            all_logs.append(log_entry)
+
             return JsonResponse({'result': most_common_result})
         finally:
             if os.path.exists(filename):
@@ -96,6 +108,9 @@ def get_most_common_result():
     counter = Counter(last_five_results)
     most_common_result, _ = counter.most_common(1)[0]
     return most_common_result
+
+def get_logs(request):
+    return JsonResponse({'logs': all_logs})
 
 def index(request):
     return render(request, 'render/index.html', {})

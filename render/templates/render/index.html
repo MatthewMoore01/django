@@ -26,6 +26,25 @@
         p {
             font-size: 18px;
         }
+        #logs {
+            margin-top: 20px;
+            text-align: left;
+            width: 80%;
+            max-width: 600px;
+            margin: 0 auto;
+            border: 1px solid #ccc;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        #logs h2 {
+            margin: 0 0 10px 0;
+        }
+        #logs pre {
+            background: #f9f9f9;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
     </style>
 </head>
 <body>
@@ -35,11 +54,16 @@
     </div>
     <button id="start">Start</button>
     <p id="result">Result: </p>
+    <div id="logs">
+        <h2>Testing Logs</h2>
+        <pre id="logContent"></pre>
+    </div>
     <script>
         document.addEventListener('DOMContentLoaded', (event) => {
             const video = document.querySelector('#video');
             const startButton = document.querySelector('#start');
             const resultElement = document.querySelector('#result');
+            const logContent = document.querySelector('#logContent');
 
             let captureInterval;
 
@@ -83,6 +107,7 @@
                         contentType: false,
                         success: function(response) {
                             resultElement.textContent = 'Result: ' + response.result;
+                            fetchLogs();
                         },
                         error: function(err) {
                             console.error('Error sending the screenshot: ', err);
@@ -92,9 +117,23 @@
                 }, 'image/jpeg');
             }
 
+            function fetchLogs() {
+                $.ajax({
+                    url: '/get_logs/',
+                    type: 'GET',
+                    success: function(response) {
+                        logContent.textContent = JSON.stringify(response.logs, null, 2);
+                    },
+                    error: function(err) {
+                        console.error('Error fetching logs: ', err);
+                    }
+                });
+            }
+
             startButton.addEventListener('click', () => {
                 startVideoStream();
                 captureInterval = setInterval(captureAndSendFrame, 1000);  // Capture frame every second
+                fetchLogs();
             });
         });
     </script>
