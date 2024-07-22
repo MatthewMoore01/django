@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Capture and Send Image</title>
+</head>
+<body>
+    <h1>Real-Time Camera Stream</h1>
+    <button onclick="captureAndSend()">Take Image</button>
+    <p id="result">Result: </p>
+    <script>
+        function captureAndSend() {
+            fetch('/capture/')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('result').innerText = "Result: " + data.result;
+                })
+                .catch(error => {
+                    document.getElementById('result').innerText = "Error capturing image";
+                });
+        }
+    </script>
+</body>
+</html>
