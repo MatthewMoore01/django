@@ -1,31 +1,57 @@
-<!doctype html>
-{% load static %}
-
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-    <title>Hello Django on Render!</title>
-
-    <link rel="stylesheet"
-            href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
-            integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk"
-            crossorigin="anonymous">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real-Time Camera Stream</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
-<header class="container mt-4 mb-4">
-    <a href="https://render.com">
-        <img src="{% static "render/render.png" %}" alt="Render" class="mw-100">
-    </a>
-</header>
-<main class="container">
-    <div class="row text-center justify-content-center">
-        <div class="col">
-            <h1 class="display-4">Hello World!</h1>
-        </div>
+    <h1>Real-Time Camera Stream</h1>
+    <div>
+        <video id="video" width="360" height="480" autoplay></video>
     </div>
-</main>
+    <button id="capture">Take Image</button>
+    <p id="result">Result: </p>
+    <script>
+        document.addEventListener('DOMContentLoaded', (event) => {
+            const video = document.querySelector('#video');
+            const captureButton = document.querySelector('#capture');
+            const resultElement = document.querySelector('#result');
+
+            navigator.mediaDevices.getUserMedia({ video: true })
+                .then(stream => {
+                    video.srcObject = stream;
+                })
+                .catch(err => {
+                    console.error('Error accessing the camera: ', err);
+                });
+
+            captureButton.addEventListener('click', () => {
+                const canvas = document.createElement('canvas');
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+                canvas.getContext('2d').drawImage(video, 0, 0);
+                canvas.toBlob(blob => {
+                    const formData = new FormData();
+                    formData.append('file', blob, 'screenshot.jpg');
+
+                    $.ajax({
+                        url: '/capture/',
+                        type: 'POST',
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                        success: function(response) {
+                            resultElement.textContent = 'Result: ' + response.result;
+                        },
+                        error: function(err) {
+                            console.error('Error sending the screenshot: ', err);
+                        }
+                    });
+                }, 'image/jpeg');
+            });
+        });
+    </script>
 </body>
 </html>
