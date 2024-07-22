@@ -4,12 +4,17 @@ from django.views.decorators.csrf import csrf_exempt
 import cv2
 import numpy as np
 import os
+import tempfile
 import openai
 from openai import OpenAI, AssistantEventHandler
 from typing_extensions import override
+from collections import deque, Counter
 
 # Initialize OpenAI client
 client = OpenAI(api_key=os.getenv('OPENAI_API_KEY'))
+
+# Queue to hold the last five results
+last_five_results = deque(maxlen=5)
 
 @csrf_exempt
 def capture(request):
@@ -18,11 +23,20 @@ def capture(request):
         image = np.asarray(bytearray(file.read()), dtype="uint8")
         image = cv2.imdecode(image, cv2.IMREAD_COLOR)
 
-        filename = 'screenshot.jpg'
-        cv2.imwrite(filename, image)
-        result = identify_lateral_flow_test(filename)
+        # Use a temporary file to ensure it gets cleaned up properly
+        with tempfile.NamedTemporaryFile(suffix='.jpg', delete=False) as temp_file:
+            filename = temp_file.name
+            cv2.imwrite(filename, image)
 
-        return JsonResponse({'result': result})
+        try:
+            result = identify_lateral_flow_test(filename)
+            last_five_results.append(result)
+            most_common_result = get_most_common_result()
+            return JsonResponse({'result': most_common_result})
+        finally:
+            if os.path.exists(filename):
+                os.remove(filename)
+
     return JsonResponse({'error': 'Invalid request'}, status=400)
 
 def identify_lateral_flow_test(file_path):
@@ -71,14 +85,17 @@ def identify_lateral_flow_test(file_path):
         ) as stream:
             stream.until_done()
 
-        # Clean up the saved file
-        os.remove(file_path)
-
         return result["result"]
 
     except Exception as e:
         return str(e)
 
+def get_most_common_result():
+    if not last_five_results:
+        return "No results yet"
+    counter = Counter(last_five_results)
+    most_common_result, _ = counter.most_common(1)[0]
+    return most_common_result
 
 def index(request):
     return render(request, 'render/index.html', {})
