@@ -81,4 +81,4 @@ def identify_lateral_flow_test(file_path):
 
 
 def index(request):
-    return render(request, 'index.html')
+    return render(request, 'render/index.html', {})
