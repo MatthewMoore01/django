@@ -112,5 +112,8 @@ def get_most_common_result():
 def get_logs(request):
     return JsonResponse({'logs': all_logs})
 
+def logs_page(request):
+    return render(request, 'render/logs.html')
+
 def index(request):
     return render(request, 'render/index.html', {})

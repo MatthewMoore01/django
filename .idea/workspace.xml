@@ -5,13 +5,23 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="16776c29-8225-44ee-8dcd-80f57ffb82a3" name="Changes" comment="updated app">
+      <change afterPath="$PROJECT_DIR$/render/templates/render/logs.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/render/templates/render/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/render/templates/render/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/render/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/render/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/render/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/render/views.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="HTML File" />
+      </list>
+    </option>
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
@@ -23,6 +33,7 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "DefaultHtmlFileTemplate": "HTML File",
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "WebServerToolWindowFactoryState": "false",
@@ -74,7 +85,7 @@
       <option name="presentableId" value="Default" />
       <updated>1721608787820</updated>
       <workItem from="1721608791418" duration="1998000" />
-      <workItem from="1721664805737" duration="10057000" />
+      <workItem from="1721664805737" duration="11419000" />
     </task>
     <servers />
   </component>

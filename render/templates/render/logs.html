@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Testing Logs</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+        #logs {
+            margin-top: 20px;
+            text-align: left;
+            width: 80%;
+            max-width: 600px;
+            margin: 20px auto;
+            border: 1px solid #ccc;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        #logs h2 {
+            margin: 0 0 10px 0;
+        }
+        #logs pre {
+            background: #f9f9f9;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>Testing Logs</h1>
+    <div id="logs">
+        <h2>Testing Logs</h2>
+        <pre id="logContent"></pre>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', (event) => {
+            const logContent = document.querySelector('#logContent');
+
+            function fetchLogs() {
+                $.ajax({
+                    url: '/get_logs/',
+                    type: 'GET',
+                    success: function(response) {
+                        logContent.textContent = JSON.stringify(response.logs, null, 2);
+                    },
+                    error: function(err) {
+                        console.error('Error fetching logs: ', err);
+                    }
+                });
+            }
+
+            fetchLogs();
+            setInterval(fetchLogs, 10000);  // Refresh logs every 10 seconds
+        });
+    </script>
+</body>
+</html>
